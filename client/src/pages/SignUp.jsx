@@ -1,8 +1,35 @@
-import { Button, Label, TextInput } from 'flowbite-react'
-import React from 'react'
-import { Link } from 'react-router-dom'
+import { Alert, Button, Label, Spinner, TextInput } from 'flowbite-react'
+import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { useForm } from 'react-hook-form';
+import axios from "axios";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const SignUp = () => {
+    const [loading, setLoading] = useState(false)
+    const navigate = useNavigate()
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        reset
+    } = useForm();
+    const onsubmit = async (data) => {
+        setLoading(true)
+        try {
+            const response = await axios.post('/api/auth/signup', data);
+            if (response.data.success === true) {
+                toast.success("Sign Up Successfully!")
+                setLoading(false)
+                navigate('/sign-in')
+                reset()
+                setLoading(false)
+            }
+        } catch (error) {
+            setLoading(false)
+        }
+    }
     return (
         <div className='min-h-screen mt-20'>
             <div className='flex p-3 max-w-3xl mx-auto flex-col md:flex-row gap-5'>
@@ -24,32 +51,46 @@ const SignUp = () => {
                 {/* right  */}
 
                 <div className='flex-1'>
-                    <form action="" className='flex flex-col gap-4'>
+                    <form action="" className='flex flex-col gap-4' onSubmit={handleSubmit(onsubmit)}>
                         <div className=''>
                             <Label value='Your username' />
-                            <TextInput
-                                type='text'
-                                placeholder='Username'
-                                id="username"
+                            <TextInput type='text' placeholder='Username' id="username" {...register('username', { required: true })}
                             />
+                            {
+                                errors.username && (
+                                    <Alert className='mt-5' color={'failure'}>Please fill out this field</Alert>
+                                )
+                            }
                         </div>
                         <div className=''>
                             <Label value='Your email' />
-                            <TextInput
-                                type='text'
-                                placeholder='name@company.com'
-                                id="email"
+                            <TextInput type='email' placeholder='name@company.com' id="email" {...register('email', { required: true })}
                             />
+                            {
+                                errors.email && (
+                                    <Alert className='mt-5' color={'failure'}>Please fill out this field</Alert>
+                                )
+                            }
                         </div>
                         <div className=''>
                             <Label value='Your password' />
-                            <TextInput
-                                type='text'
-                                placeholder='Password'
-                                id="password"
+                            <TextInput type='password' placeholder='Password' id="password" {...register('password', { required: true })}
                             />
+                            {
+                                errors.password && (
+                                    <Alert className='mt-5' color={'failure'}>Please fill out this field</Alert>
+                                )
+                            }
                         </div>
-                        <Button gradientDuoTone={"purpleToPink"} type='submit'> Sign Up</Button>
+                        <Button gradientDuoTone={"purpleToPink"} type='submit'>
+                            {
+                                loading ? (<>
+                                    <Spinner size='sm' />
+                                    <span className='pl-3'>Loading...</span>
+                                </>) :
+                                    (
+                                        "Sign Up"
+                                    )}</Button>
                     </form>
                     <div className='flex gap-2 text-sm mt-5'>
                         <span>
@@ -61,6 +102,7 @@ const SignUp = () => {
                     </div>
                 </div>
             </div>
+            <ToastContainer />
         </div>
     )
 }
