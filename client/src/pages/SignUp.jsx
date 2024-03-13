@@ -19,9 +19,8 @@ const SignUp = () => {
         setLoading(true)
         try {
             const response = await axios.post('/api/auth/signup', data);
-            if (response.data.success === true) {
+            if (response.data) {
                 toast.success("Sign Up Successfully!")
-                setLoading(false)
                 navigate('/sign-in')
                 reset()
                 setLoading(false)
