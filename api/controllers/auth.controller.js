@@ -17,7 +17,7 @@ export const signup = async (req, res, next) => {
     })
     try {
         await newUser.save()
-        res.json({ message: "Sign Up Successfull" });
+        res.json({ success: true, message: "Sign Up Successful" });
     } catch (error) {
         next(error)
     }
@@ -32,7 +32,7 @@ export const signin = async (req, res, next) => {
     try {
         const validUser = await User.findOne({ email })
         if (!validUser) {
-            return  next(errorHandler(404, 'user not found'))
+            return next(errorHandler(404, 'user not found'))
         }
         const validPassword = bcrypt.compareSync(password, validUser.password)
         if (!validPassword) {
@@ -47,7 +47,7 @@ export const signin = async (req, res, next) => {
         res.status(200).cookie('access_token', token, {
             httpOnly: true,
         })
-            .json(rest)
+            .json({ success: true, ...rest })
     } catch (error) {
         next(error)
     }
