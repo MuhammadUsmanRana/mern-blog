@@ -1,12 +1,9 @@
-import { Alert, Button, Label, Spinner, TextInput } from 'flowbite-react';
-import { useState } from 'react';
+import { Button, Label, Spinner, TextInput } from 'flowbite-react';
 import { Link, useNavigate } from 'react-router-dom';
-// import OAuth from '../components/OAuth';
 import { useSelector, useDispatch } from "react-redux"
 import { signInFailure, signInStart, signInSuccess } from '../redux/user/userSlice';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
-
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
