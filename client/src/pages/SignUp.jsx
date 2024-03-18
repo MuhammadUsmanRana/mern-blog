@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { OAuth } from '../components/OAuth.jsx';
 
 export default function SignUp() {
     const { register, handleSubmit, formState: { errors } } = useForm();
@@ -15,7 +16,6 @@ export default function SignUp() {
         try {
             setLoading(true);
             const res = await axios.post('/api/auth/signup', formData);
-            console.log(res)
             if (res.data.success === true) {
                 navigate('/sign-in');
             } else {
@@ -23,7 +23,6 @@ export default function SignUp() {
             }
         } catch (error) {
             toast.error(error.message);
-        } finally {
             setLoading(false);
         }
     };
@@ -92,6 +91,7 @@ export default function SignUp() {
                                 'Sign Up'
                             )}
                         </Button>
+                        <OAuth />
                     </form>
                     <div className='flex gap-2 text-sm mt-5'>
                         <span>Have an account?</span>
