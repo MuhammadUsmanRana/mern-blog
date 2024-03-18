@@ -18,7 +18,7 @@ const Dashboard = () => {
       <div className='md:w-56'>
         <DashSidebar />
       </div>
-      <div className=''>
+      <div className='max-w-lg mx-auto p-3 w-full'>
         {tab === "profile" && <DashProfile />}
       </div>
     </div>
