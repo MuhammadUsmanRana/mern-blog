@@ -1,7 +1,6 @@
-import React from 'react'
 import { Footer } from 'flowbite-react'
 import { Link } from 'react-router-dom'
-import { BsDribbble, BsFacebook, BsGithub, BsInstagram, BsTriangle, BsTwitter } from 'react-icons/bs'
+import { BsDribbble, BsFacebook, BsGithub, BsInstagram, BsTwitter } from 'react-icons/bs'
 const FooterCom = () => {
     return (
         <Footer container className='border border-t-8 border-teal-500'>
@@ -13,7 +12,7 @@ const FooterCom = () => {
                             <span
                                 className='px-2 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg text-white'
                             >
-                                Sahand's
+                                Usman
                             </span>
                             Blogs
                         </Link>
@@ -34,7 +33,7 @@ const FooterCom = () => {
                                     target='_blank'
                                     rel='noopener noreferrer'
                                 >
-                                    Sahand's  Blogs
+                                    Usman Blogs
                                 </Footer.Link>
                             </Footer.LinkGroup>
                         </div>
@@ -64,7 +63,7 @@ const FooterCom = () => {
                 </div>
                 <Footer.Divider />
                 <div className='w-full sm:flex sm:items-center sm:justify-between'>
-                    <Footer.Copyright href='#' by="Sahand's Blogs" year={new Date().getFullYear()} />
+                    <Footer.Copyright href='#' by="Usman Blogs" year={new Date().getFullYear()} />
                     <div className="flex gap-6 sm-mt-0 mt-4 justify-center">
                         <Footer.Icon href='#' icon={BsFacebook} />
                         <Footer.Icon href='#' icon={BsInstagram} />
