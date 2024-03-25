@@ -19,7 +19,6 @@ export default function SignIn() {
     try {
       dispatch(signInStart());
       const res = await axios.post('/api/auth/signin', formData);
-      console.log("res",res.data)
       if (res.data.success === true) {
         dispatch(signInSuccess(res.data))
         navigate('/');
@@ -39,7 +38,7 @@ export default function SignIn() {
         <div className='flex-1'>
           <Link to='/' className='font-bold dark:text-white text-4xl'>
             <span className='px-2 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg text-white'>
-              Sahand's
+              Usman's
             </span>
             Blog
           </Link>
