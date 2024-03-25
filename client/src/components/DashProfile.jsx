@@ -5,15 +5,24 @@ import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/
 import { app } from "../firebase";
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
-import { updateStart, updateSuccess, updateFailure, deleteUserFailure, deleteUserStart, deleteUserSuccess, signoutSuccess } from "../redux/user/userSlice";
+import {
+  updateStart,
+  updateSuccess,
+  updateFailure,
+  deleteUserFailure,
+  deleteUserStart,
+  deleteUserSuccess,
+  signoutSuccess
+} from "../redux/user/userSlice";
 import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { HiOutlineExclamationCircle } from "react-icons/hi";
+import { Link } from "react-router-dom"
 
 
 const DashProfile = () => {
-  const currentUser = useSelector((state) => state.user)
+  const currentState = useSelector((state) => state.user)
   const [formData, setFormData] = useState({});
   const [imageFile, setImageFile] = useState(null);
   const [imageFileUrl, setImageFileUrl] = useState(null);
@@ -21,6 +30,7 @@ const DashProfile = () => {
   const [imageFileUploadError, setImageFileUploadError] = useState(null);
   const [imageFileUploading, setImageFileUploading] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
   const filePickerRef = useRef();
@@ -87,17 +97,17 @@ const DashProfile = () => {
       toast.info("No Changes made");
       return;
     }
-
+    setLoading(true)
     if (imageFileUploading) {
       return;
     }
-
     try {
       dispatch(updateStart());
-      const res = await axios.put(`/api/user/update/${currentUser.currentState._id}`, formData)
+      const res = await axios.put(`/api/user/update/${currentState.currentState._id}`, formData)
       if (res.data.success === true) {
         dispatch(updateSuccess(res.data.rest))
         toast.success("update Profile Successfull")
+        setLoading(false)
       } else {
         dispatch(updateFailure(res.data.message));
         toast.error(res.data.message)
@@ -110,7 +120,7 @@ const DashProfile = () => {
   const handleDeleteUser = async () => {
     try {
       dispatch(deleteUserStart())
-      const res = await axios.delete(`http://localhost:3000/api/user/delete/${currentUser.currentState._id}`, { withCredentials: true })
+      const res = await axios.delete(`http://localhost:3000/api/user/delete/${currentState.currentState._id}`, { withCredentials: true })
       if (res.data.success === true) {
         dispatch(deleteUserSuccess(res.data));
         toast.success(res.data.message)
@@ -159,7 +169,7 @@ const DashProfile = () => {
               }} />
             )
           }
-          <img src={imageFileUrl || currentUser.currentState.profilePicture}
+          <img src={imageFileUrl || currentState.currentState.profilePicture}
             alt="user"
             className={`rounded-full w-full h-full object-cover border-8 border-[lightgray] ${imageFileUploadProcess &&
               imageFileUploadProcess < 100 &&
@@ -169,12 +179,21 @@ const DashProfile = () => {
             imageFileUploadError && <Alert color="failure">{imageFileUploadError}</Alert>
           }
         </div>
-        <TextInput type="text" id="username" placeholder="username" defaultValue={currentUser.currentState.username} onChange={handleChange} />
-        <TextInput type="text" id="email" placeholder="email" defaultValue={currentUser.currentState.email} onChange={handleChange} />
+        <TextInput type="text" id="username" placeholder="username" defaultValue={currentState.currentState.username} onChange={handleChange} />
+        <TextInput type="text" id="email" placeholder="email" defaultValue={currentState.currentState.email} onChange={handleChange} />
         <TextInput type="text" id="password" placeholder="**********" onChange={handleChange} />
-        <Button type="submit" gradientDuoTone='purpleToBlue' outline>
-          Submit
+        <Button type="submit" gradientDuoTone='purpleToBlue' outline disabled={loading}>
+          {loading ? "loading..." : "Update"}
         </Button>
+        {
+          currentState.currentState.isAdmin === true && (
+            <Link to='/create-post'>
+              <Button type="button" gradientDuoTone="purpleToPink" className="w-full">
+                Create a Post
+              </Button>
+            </Link>
+          )
+        }
       </form>
       <div className="text-red-500 flex justify-between mt-5">
         <span onClick={() => setShowModal(true)} className="cursor-pointer">Delete Acount</span>
