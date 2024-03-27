@@ -6,7 +6,10 @@ import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/
 import { app } from "../firebase";
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
-
+import axios from "axios"
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from 'react-router-dom';
 
 const CreatePost = () => {
   const [file, setFile] = useState(null);
@@ -14,6 +17,7 @@ const CreatePost = () => {
   const [imageUploadError, setImageUploadError] = useState(null);
   const [formData, setFormData] = useState({});
 
+  const navigate = useNavigate()
   const handleUploadImage = async () => {
     try {
       if (!file) {
@@ -50,13 +54,31 @@ const CreatePost = () => {
       console.log("error", error);
     }
   }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post('http://localhost:3000/api/post/create', formData, {
+        withCredentials: true
+      });
+      if (res.data.success === true) {
+        toast.success("post created successfull");
+        navigate(`/post/${res.data.data.slug}`);
+      } else if (!res.data.success === true) {
+        toast.error("post duplicate key error");
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+  }
   return (
     <div className='p-3 max-w-3xl mx-auto min-h-screen'>
       <h1 className='text-center text-3xl my-7 font-semibold'> Create a Post</h1>
-      <form className="flex flex-col gap-4">
+      <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <div className="flex flex-col gap-4 sm:flex-row justify-between" >
-          <TextInput type='text' placeholder='Title' required id='title' className='flex-1' />
-          <Select>
+          <TextInput type='text' placeholder='Title' required id='title' className='flex-1'
+            onChange={(e) => setFormData({ ...formData, title: e.target.value })} />
+          <Select onChange={(e) => setFormData({ ...formData, category: e.target.value })}>
             <option value="uncategorized"> Select a category</option>
             <option value="javascript">JavaScript</option>
             <option value="reactjs">ReactJs</option>
@@ -91,9 +113,12 @@ const CreatePost = () => {
             <img src={formData.image} alt="uploaded" className='w-full h-72 object-cover' />
           )
         }
-        <ReactQuill theme="snow" placeholder="Write Something..." className="h-72 mb-12" required />
+        <ReactQuill theme="snow" placeholder="Write Something..." className="h-72 mb-12"
+          required
+          onChange={(value) => setFormData({ ...formData, content: value })} />
         <Button type='submit' gradientDuoTone={'purpleToPink'}>Publish</Button>
       </form>
+      <ToastContainer />
     </div>
   )
 }
