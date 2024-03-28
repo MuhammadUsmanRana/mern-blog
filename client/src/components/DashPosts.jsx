@@ -7,15 +7,13 @@ import { HiOutlineExclamationCircle } from 'react-icons/hi';
 
 
 const DashPosts = () => {
+
   const [userPosts, setUserPosts] = useState([]);
   const [showMore, setShowMore] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [postIdToDelete, setPostIdToDelete] = useState("");
-
-
   const currentState = useSelector((state) => state.user)
 
-  console.log(userPosts)
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -58,12 +56,11 @@ const DashPosts = () => {
       const res = await axios.delete(`http://localhost:3000/api/post/deleteposts/${postIdToDelete}/${currentState.currentState._id}`, {
         withCredentials: true
       });
-      console.log(res, "res.delete")
       if (res.data.success === true) {
         setUserPosts(prev => prev.filter((post) => post._id !== postIdToDelete));
       }
     } catch (error) {
-
+      console.log(error)
     }
   }
 
@@ -109,7 +106,7 @@ const DashPosts = () => {
                         </Table.Cell>
                         <Table.Cell>
                           <Link className='text-teal-500 hover:underline cursor-pointer'
-                            to={`/delete-post/${post._id}`}>
+                            to={`/update-post/${post._id}`}>
                             <span>Edit </span>
                           </Link>
                         </Table.Cell>
