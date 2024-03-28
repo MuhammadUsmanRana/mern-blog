@@ -23,7 +23,7 @@ export const createPost = async (req, res, next) => {
     }
 }
 
-export const grtposts = async (req, res, next) => {
+export const getposts = async (req, res, next) => {
     try {
         const startIndex = parseInt(req.query.startIndex) || 0;
         const limit = parseInt(req.query.limit) || 9;
@@ -60,4 +60,16 @@ export const grtposts = async (req, res, next) => {
     } catch (error) {
         next(error)
     }
-}   
+}
+
+export const deleteposts = async (req, res, next) => {
+    if (!req.user.isAdmin || req.user.id !== req.params.userId) {
+        return next(errorHandler(403, "you are not allow to delete this post"))
+    }
+    try {
+        await Post.findByIdAndDelete(req.params.postId);
+        res.status(200).json({ message: "post delete successfully", success: true })
+    } catch (error) {
+        next(error)
+    }
+}

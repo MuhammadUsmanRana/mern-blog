@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import axios from "axios"
 import { useSelector } from "react-redux"
-import { Table } from "flowbite-react"
+import { Button, Modal, Table } from "flowbite-react"
 import { Link } from 'react-router-dom';
+import { HiOutlineExclamationCircle } from 'react-icons/hi';
 
 
 const DashPosts = () => {
   const [userPosts, setUserPosts] = useState([]);
   const [showMore, setShowMore] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [postIdToDelete, setPostIdToDelete] = useState("");
+
 
   const currentState = useSelector((state) => state.user)
 
@@ -48,6 +52,21 @@ const DashPosts = () => {
     }
   }
 
+  const handleDeletePost = async () => {
+    setShowModal(false);
+    try {
+      const res = await axios.delete(`http://localhost:3000/api/post/deleteposts/${postIdToDelete}/${currentState.currentState._id}`, {
+        withCredentials: true
+      });
+      console.log(res, "res.delete")
+      if (res.data.success === true) {
+        setUserPosts(prev => prev.filter((post) => post._id !== postIdToDelete));
+      }
+    } catch (error) {
+
+    }
+  }
+
   return (
     <div className='table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500'>
       {
@@ -83,9 +102,10 @@ const DashPosts = () => {
                         </Table.Cell>
                         <Table.Cell>{post.category}</Table.Cell>
                         <Table.Cell>
-                          <Link className='text-red-500 hover:underline cursor-pointer'
-                            to={`/update-post/${post._id}`}><span>Delete </span>
-                          </Link>
+                          <span className='text-red-500 hover:underline cursor-pointer' onClick={() => {
+                            setShowModal(true)
+                            setPostIdToDelete(post._id)
+                          }}>Delete </span>
                         </Table.Cell>
                         <Table.Cell>
                           <Link className='text-teal-500 hover:underline cursor-pointer'
@@ -111,6 +131,25 @@ const DashPosts = () => {
           <p>You have no post yet!</p>
         )
       }
+      <Modal show={showModal} size="md" onClose={() => setShowModal(false)} popup>
+        <Modal.Header />
+        <Modal.Body>
+          <div className="text-center">
+            <HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-gray-400 dark:text-gray-200" />
+            <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+              Are you sure you want to delete this Account?
+            </h3>
+            <div className="flex justify-center gap-4">
+              <Button color="failure" onClick={() => handleDeletePost()}>
+                {"Yes, I'm sure"}
+              </Button>
+              <Button color="gray" onClick={() => setShowModal(false)}>
+                No, cancel
+              </Button>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
     </div >
   )
 }
