@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 
 const DashPosts = () => {
   const [userPosts, setUserPosts] = useState([]);
+  const [showMore, setShowMore] = useState(true);
 
   const currentState = useSelector((state) => state.user)
 
@@ -19,6 +20,9 @@ const DashPosts = () => {
         if (res.data.posts) {
           setUserPosts(res.data.posts)
         }
+        if (res.data.posts.length < 9) {
+          setShowMore(false)
+        }
       } catch (error) {
         console.log(error.message)
       }
@@ -27,11 +31,28 @@ const DashPosts = () => {
       fetchPosts()
     }
   }, [currentState.currentState._id]);
+
+  const handleShowMore = async () => {
+    const startIndex = userPosts.length;
+    try {
+      const res = await axios.get(`http://localhost:3000/api/post/getposts?userId=${currentState.currentState._id}&startIndex=${startIndex}`);
+
+      if (res.data.posts) {
+        setUserPosts((prePost) => [...prePost, ...res.data.posts]);
+      }
+      if (res.data.posts.length < 9) {
+        setShowMore(false)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return (
-    <div className='table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500 '>
+    <div className='table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500'>
       {
         currentState.currentState.isAdmin && userPosts.length > 0 ? (
-          <div>
+          <>
             <Table hoverable className='shadow-md'>
               <Table.Head>
                 <Table.HeadCell>Date Updated</Table.HeadCell>
@@ -78,7 +99,14 @@ const DashPosts = () => {
                 })
               }
             </Table>
-          </div>
+            {
+              showMore && (
+                <button onClick={handleShowMore} className='w-full text-teal-500 self-center text-sm py-7'>
+                  show more
+                </button>
+              )
+            }
+          </>
         ) : (
           <p>You have no post yet!</p>
         )
