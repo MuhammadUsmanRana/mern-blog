@@ -23,7 +23,7 @@ export const createPost = async (req, res, next) => {
     }
 }
 
-export const getposts = async (req, res, next) => {
+export const getPosts = async (req, res, next) => {
     try {
         const startIndex = parseInt(req.query.startIndex) || 0;
         const limit = parseInt(req.query.limit) || 9;
@@ -62,7 +62,7 @@ export const getposts = async (req, res, next) => {
     }
 }
 
-export const deleteposts = async (req, res, next) => {
+export const deletePosts = async (req, res, next) => {
     if (!req.user.isAdmin || req.user.id !== req.params.userId) {
         return next(errorHandler(403, "you are not allow to delete this post"))
     }
@@ -74,7 +74,7 @@ export const deleteposts = async (req, res, next) => {
     }
 }
 
-export const updateposts = async (req, res, next) => {
+export const updatePosts = async (req, res, next) => {
     if (!req.user.isAdmin || req.user.id !== req.params.userId) {
         return next(errorHandler(403, "you are not allow to update this post"))
     }

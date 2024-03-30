@@ -1,16 +1,16 @@
-import { Alert, Button, FileInput, Select, TextInput } from 'flowbite-react'
+import { Alert, Button, FileInput, Select, TextInput } from 'flowbite-react';
 import React, { useEffect, useState } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage"
+import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage";
 import { app } from "../firebase";
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
-import axios from "axios"
+import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useSelector, useDispatch } from "react-redux"
+import { useSelector } from "react-redux";
 
 const UpdatePost = () => {
     const [file, setFile] = useState(null);
@@ -18,14 +18,14 @@ const UpdatePost = () => {
     const [imageUploadError, setImageUploadError] = useState(null);
     const [imageUploadProgress, setImageUploadProgress] = useState(null);
 
-    console.log(formData)
+    console.log("formData", formData)
     const currentState = useSelector((state) => state.user)
     const postId = useParams();
     const navigate = useNavigate();
-    const dispatch = useDispatch()
 
     useEffect(() => {
         try {
+            console.log("postId", postId)
             const fetchPosts = async () => {
                 const res = await axios.get(`http://localhost:3000/api/post/getposts?userId/${postId}`);
                 console.log(res.data.posts)
@@ -84,6 +84,7 @@ const UpdatePost = () => {
             });
             if (res.data.success === true) {
                 toast.success("post created successfull");
+                setFormData({});
                 navigate(`/post/${res.data.data.slug}`);
             } else if (!res.data.success === true) {
                 toast.error("post edit error");
@@ -99,11 +100,11 @@ const UpdatePost = () => {
                 <div className="flex flex-col gap-4 sm:flex-row justify-between" >
                     <TextInput type='text' placeholder='Title' required id='title' className='flex-1'
                         onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                        value={formData.title}
+                        value={formData?.title}
                     />
                     <Select
                         onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                        value={formData.category}
+                        value={formData?.category}
                     >
                         <option value="uncategorized"> Select a category</option>
                         <option value="javascript">JavaScript</option>
@@ -142,7 +143,7 @@ const UpdatePost = () => {
                 <ReactQuill theme="snow" placeholder="Write Something..." className="h-72 mb-12"
                     required
                     onChange={(value) => setFormData({ ...formData, content: value })}
-                    value={formData.content}
+                    value={formData?.content}
                 />
                 <Button type='submit' gradientDuoTone={'purpleToPink'}>Update Post</Button>
             </form>
@@ -151,4 +152,4 @@ const UpdatePost = () => {
     )
 }
 
-export default UpdatePost
+export default UpdatePost;
