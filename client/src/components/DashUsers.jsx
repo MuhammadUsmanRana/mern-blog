@@ -4,6 +4,8 @@ import { useSelector } from "react-redux"
 import { Button, Modal, Table } from "flowbite-react"
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
 import { FaCheck, FaTimes } from "react-icons/fa"
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const DashUsers = () => {
@@ -12,8 +14,6 @@ const DashUsers = () => {
   const [showMore, setShowMore] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [userIdToDelete, setUserIdToDelete] = useState("");
-
-  console.log("users", users)
   const currentState = useSelector((state) => state.user)
 
   useEffect(() => {
@@ -54,6 +54,23 @@ const DashUsers = () => {
     }
   }
 
+  const handleDeleteUser = async () => {
+    try {
+      const res = await axios.delete(`http://localhost:3000/api/user/delete/${userIdToDelete}`, {
+        withCredentials: true
+      });
+      if (res.data.success === true) {
+        setUsers((preUser) => preUser.filter((user) => user._id !== userIdToDelete));
+        toast.success(res.data.message)
+        setShowModal(false)
+      } else {
+        toast.error("User not Found");
+      }
+    } catch (error) {
+      console.log(error)
+    }
+
+  }
   return (
     <div className='table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500'>
       {
@@ -125,6 +142,7 @@ const DashUsers = () => {
           </div>
         </Modal.Body>
       </Modal>
+      <ToastContainer />
     </div >
   )
 }
