@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
-import moment from "moment"
+import moment from "moment";
+import { FaThumbsUp } from "react-icons/fa"
+import { useSelector } from 'react-redux';
 
-const Comment = ({ comment }) => {
+const Comment = ({ comment, onLike }) => {
+    const currentState = useSelector((state) => state.user);
+    const [user, setUser] = useState({});
     // console.log(comment)
-    const [user, setUser] = useState({})
-    // console.log(user)
     useEffect(() => {
         const getUser = async () => {
             try {
@@ -27,13 +29,30 @@ const Comment = ({ comment }) => {
             </div>
             <div>
                 <div className='flex-1'>
-                    <span className='font-bold mr-1 text-xs truncate'>{user ? `@${user.username}` : "ananomouse user"}</span>
-                    <span className='text-gray-500 text-xs'>{moment(comment.createdAt).fromNow()}</span>
+                    <span className='font-bold mr-1 text-xs truncate'>
+                        {user ? `@${user.username}` : "ananomouse user"}
+                    </span>
+                    <span className='text-gray-500 text-xs'>
+                        {moment(comment.createdAt).fromNow()}
+                    </span>
                 </div>
-                <p className='text-gray-500 pb-2'>{comment.content}</p>
+                <p className='text-gray-500 pb-2'>
+                    {comment.content}
+                </p>
+                <div className='flex items-center pt-2 text-xs border-t dark:border-gray-700 max-w-fit gap-2'>
+                    <button type='button' className={`text-gray-400 hover:text-blue-500 ${currentState &&
+                        comment.likes.includes(currentState._id) && '!text-blue-500'}`}
+                        onClick={() => onLike(comment._id)}>
+                        <FaThumbsUp className='text-sm' />
+                    </button>
+                    <p>{
+                        comment.numberOfLikes > 0 && comment.numberOfLikes + " " + (comment.numberOfLikes === 1 ? "like" : "likes")
+                    }
+                    </p>
+                </div>
             </div>
-        </div>
+        </div >
     )
 }
 
-export default Comment
+export default Comment;

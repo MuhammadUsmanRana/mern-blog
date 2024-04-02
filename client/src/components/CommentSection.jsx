@@ -1,7 +1,7 @@
 import { Alert, Button, Textarea } from 'flowbite-react';
 import React, { useState, useEffect } from 'react';
 import { useSelector } from "react-redux"
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from "react-hook-form";
 import axios from "axios"
 import Comment from './Comment';
@@ -9,12 +9,12 @@ import Comment from './Comment';
 const CommentSection = ({ postId }) => {
     const [commentError, setCommentError] = useState(null);
     const [comments, setComments] = useState([]);
-    console.log(comments)
+
     const { handleSubmit, register, reset } = useForm();
     const { currentState } = useSelector((state) => state.user);
+    const navigate = useNavigate();
 
     const onSubmit = async (data) => {
-        console.log(data);
         if (data.comment.length > 200) {
             return;
         }
@@ -52,6 +52,28 @@ const CommentSection = ({ postId }) => {
         gitComment()
     }, [postId])
 
+    const handleLikes = async (commentId) => {
+        if (!currentState) {
+            navigate("/sign-in")
+            return;
+        }
+        axios.defaults.withCredentials = true;
+        try {
+            const res = await axios.put(`http://localhost:3000/api/comment/likecomment/${commentId}`)
+            if (res.data.success === true) {
+                setComments(comments.map((comment) =>
+                    comment._id === commentId
+                        ?
+                        {
+                            ...comment,
+                            likes: res.data.data.likes,
+                            numberOfLikes: res.data.data.likes.length
+                        } : comment))
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     return (
         <div className='max-w-2xl mx-auto w-full  p-3'>
@@ -102,7 +124,11 @@ const CommentSection = ({ postId }) => {
                         </div>
                         {
                             comments.map((comment, index) => (
-                                <Comment key={index} comment={comment} />
+                                <Comment
+                                    key={index}
+                                    comment={comment}
+                                    onLike={handleLikes}
+                                />
                             ))
                         }
                     </>
