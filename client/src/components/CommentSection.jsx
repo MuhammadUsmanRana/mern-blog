@@ -1,12 +1,15 @@
 import { Alert, Button, Textarea } from 'flowbite-react';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from "react-redux"
 import { Link } from 'react-router-dom';
 import { useForm } from "react-hook-form";
 import axios from "axios"
+import Comment from './Comment';
 
 const CommentSection = ({ postId }) => {
-    const [commentError, setCommentError] = useState(null)
+    const [commentError, setCommentError] = useState(null);
+    const [comments, setComments] = useState([]);
+    console.log(comments)
     const { handleSubmit, register, reset } = useForm();
     const { currentState } = useSelector((state) => state.user);
 
@@ -23,7 +26,9 @@ const CommentSection = ({ postId }) => {
             }, { withCredentials: true });
             console.log(res.data);
             if (res.data.success === true) {
-                setCommentError(null)
+                setComments("");
+                setCommentError(null);
+                setComments([res.data.data, ...comments]);
                 reset();
             }
         } catch (error) {
@@ -31,12 +36,29 @@ const CommentSection = ({ postId }) => {
         }
     }
 
+    useEffect(() => {
+        const gitComment = async () => {
+            try {
+                const res = await axios.get(`http://localhost:3000/api/comment/getpostcomment/${postId}`,
+                    { withCredentials: true });
+                if (res.data.success === true) {
+                    setComments(res.data.data)
+                    setCommentError(null)
+                }
+            } catch (error) {
+                console.log(error.message);
+            }
+        }
+        gitComment()
+    }, [postId])
+
+
     return (
         <div className='max-w-2xl mx-auto w-full  p-3'>
             {
                 currentState ? (
                     <div className='flex items-center gap-1 my-5 text-gray-500 text-sm'>
-                        <p>Sign in as</p>
+                        <p>Sign in as:</p>
                         <img className='h-5 w-5 object-cover rounded-full' src={currentState.profilePicture} alt="commentImage" />
                         <Link to={"/dashboard?tab=profile"} className='text-xs text-cyan-500 hover:underline'>
                             @{currentState.username}
@@ -69,10 +91,25 @@ const CommentSection = ({ postId }) => {
                             <Alert color={"failure"} className='mt-5'>{commentError}</Alert>
                         }
                     </form>
+                )}
+            {
+                comments.length === 0 ? (
+                    <p className='text-sm my-5'>No comments yet</p>
+                ) : (
+                    <>
+                        <div className='text-sm my-5 flex items-center gap-1'>
+                            <p className=''>Comments</p>
+                        </div>
+                        {
+                            comments.map((comment, index) => (
+                                <Comment key={index} comment={comment} />
+                            ))
+                        }
+                    </>
                 )
             }
         </div>
     )
 }
 
-export default CommentSection
+export default CommentSection;

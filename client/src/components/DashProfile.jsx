@@ -103,7 +103,10 @@ const DashProfile = () => {
     }
     try {
       dispatch(updateStart());
-      const res = await axios.put(`/api/user/update/${currentState.currentState._id}`, formData)
+      console.log(currentState.currentState._id)
+      const res = await axios.put(`http://localhost:3000/api/user/update/${currentState.currentState._id}`, formData, {
+        withCredentials: true
+      })
       if (res.data.success === true) {
         dispatch(updateSuccess(res.data.rest))
         toast.success("update Profile Successfull")
