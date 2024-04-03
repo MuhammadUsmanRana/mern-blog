@@ -60,6 +60,7 @@ const CommentSection = ({ postId }) => {
         axios.defaults.withCredentials = true;
         try {
             const res = await axios.put(`http://localhost:3000/api/comment/likecomment/${commentId}`)
+            console.log(res.data)
             if (res.data.success === true) {
                 setComments(comments.map((comment) =>
                     comment._id === commentId
@@ -73,6 +74,10 @@ const CommentSection = ({ postId }) => {
         } catch (error) {
             console.log(error)
         }
+    }
+
+    const handlEdit = async (comment, editedContent) => {
+        setComments(comments.map(c => c._id === comment._id ? { ...c, content: editedContent } : c))
     }
 
     return (
@@ -128,6 +133,7 @@ const CommentSection = ({ postId }) => {
                                     key={index}
                                     comment={comment}
                                     onLike={handleLikes}
+                                    onEdit={handlEdit}
                                 />
                             ))
                         }
