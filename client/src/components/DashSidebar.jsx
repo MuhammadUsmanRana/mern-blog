@@ -1,6 +1,6 @@
 import { Sidebar } from "flowbite-react"
 import { useEffect, useState } from "react";
-import { HiUser, HiArrowSmRight, HiDocumentText, HiOutlineUserGroup } from "react-icons/hi"
+import { HiUser, HiArrowSmRight, HiDocumentText, HiOutlineUserGroup, HiAnnotation } from "react-icons/hi"
 import { Link, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { signoutSuccess } from "../redux/user/userSlice";
@@ -56,17 +56,28 @@ const DashSidebar = () => {
                             </Link>
                         )
                     }
-                     {
+                    {
                         currentState.currentState.isAdmin && (
-                            <Link to="/dashboard?tab=users">
-                                <Sidebar.Item
-                                    active={tab === 'users'}
-                                    icon={HiOutlineUserGroup}
-                                    as='div'
-                                >
-                                    Users
-                                </Sidebar.Item>
-                            </Link>
+                            <>
+                                <Link to="/dashboard?tab=users">
+                                    <Sidebar.Item
+                                        active={tab === 'users'}
+                                        icon={HiOutlineUserGroup}
+                                        as='div'
+                                    >
+                                        Users
+                                    </Sidebar.Item>
+                                </Link>
+                                <Link to="/dashboard?tab=comments">
+                                    <Sidebar.Item
+                                        active={tab === 'comments'}
+                                        icon={HiAnnotation}
+                                        as='div'
+                                    >
+                                        Commants
+                                    </Sidebar.Item>
+                                </Link>
+                            </>
                         )
                     }
                     <Sidebar.Item className="cursor-pointer" icon={HiArrowSmRight} onClick={() => signOut()}>
