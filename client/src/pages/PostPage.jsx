@@ -4,24 +4,22 @@ import axios from "axios";
 import { Button, Spinner } from "flowbite-react";
 import CallToActon from '../components/CallToActon';
 import CommentSection from '../components/CommentSection';
-
+import PostCard from '../components/PostCard';
 
 const PostPage = () => {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [post, setPost] = useState(null);
+  const [recentPosts, setRecentPosts] = useState(null);
 
-  // const sanitizedContent = DOMPurify.sanitize(post.content);
   const slugPage = useParams();
-  // console.log(post)
 
   useEffect(() => {
     try {
       setLoading(true);
       const fetchPost = async () => {
-        const res = await axios.get(`http://localhost:3000/api/post/getposts?slug=${slugPage.postSlug}`);
-        // console.log(res.data.posts)
+        const res = await axios.get(`/api/post/getposts?slug=${slugPage.postSlug}`);
         if (res.data.posts) {
           setPost(res.data.posts[0]);
           setLoading(false);
@@ -38,7 +36,23 @@ const PostPage = () => {
       setError(true);
       setLoading(false)
     }
-  }, [slugPage])
+  }, [slugPage]);
+
+  useEffect(() => {
+    try {
+      const fetchRecentPosts = async () => {
+        const res = await axios.get("/api/post/getposts?limit=3")
+        const data = res.data;
+        if (data.posts) {
+          setRecentPosts(data.posts)
+        }
+      }
+      fetchRecentPosts()
+    } catch (error) {
+      console.log(error.message)
+    }
+  }, [])
+
 
   if (loading) return (
     <div className='flex justify-center item-center min-h-screen'> <Spinner size="xl" /></div>
@@ -62,6 +76,18 @@ const PostPage = () => {
         <CallToActon />
       </div>
       <CommentSection postId={post._id} />
+      <div className='flex flex-col justify-center items-center mb-5'>
+        <h1 className='text-xl mt-5'>Recent Posts</h1>
+        <div className='flex flex-wrap gap-5 mt-5 justify-center'>
+          {
+            recentPosts && (
+              recentPosts.map((post, index) => (
+                <PostCard key={index} post={post} />
+              ))
+            )
+          }
+        </div>
+      </div>
     </main>
   )
 }

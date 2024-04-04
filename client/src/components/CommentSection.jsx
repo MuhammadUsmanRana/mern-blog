@@ -23,7 +23,7 @@ const CommentSection = ({ postId }) => {
             return;
         }
         try {
-            const res = await axios.post("http://localhost:3000/api/comment/create", {
+            const res = await axios.post("/api/comment/create", {
                 content: data.comment,
                 postId,
                 userId: currentState._id
@@ -43,7 +43,7 @@ const CommentSection = ({ postId }) => {
     useEffect(() => {
         const gitComment = async () => {
             try {
-                const res = await axios.get(`http://localhost:3000/api/comment/getpostcomment/${postId}`,
+                const res = await axios.get(`/api/comment/getpostcomment/${postId}`,
                     { withCredentials: true });
                 if (res.data.success === true) {
                     setComments(res.data.data)
@@ -63,7 +63,7 @@ const CommentSection = ({ postId }) => {
         }
         axios.defaults.withCredentials = true;
         try {
-            const res = await axios.put(`http://localhost:3000/api/comment/likecomment/${commentId}`)
+            const res = await axios.put(`/api/comment/likecomment/${commentId}`)
             console.log(res.data)
             if (res.data.success === true) {
                 setComments(comments.map((comment) =>

@@ -14,7 +14,7 @@ const Comment = ({ comment, onLike, onEdit, onDelete }) => {
     useEffect(() => {
         const getUser = async () => {
             try {
-                const res = await axios.get(`http://localhost:3000/api/user/${comment.userId}`);
+                const res = await axios.get(`/api/user/${comment.userId}`);
                 if (res.data.success === true) {
                     setUser(res.data.data)
                 }
@@ -33,7 +33,7 @@ const Comment = ({ comment, onLike, onEdit, onDelete }) => {
     const handleSave = async () => {
         try {
             axios.defaults.withCredentials = true;
-            const res = await axios.put(`http://localhost:3000/api/comment/editcomment/${comment._id}`, {
+            const res = await axios.put(`/api/comment/editcomment/${comment._id}`, {
                 content: editedContent
             });
             console.log(res.data)

@@ -20,7 +20,7 @@ const DashSidebar = () => {
     }, [location.search]);
     const signOut = async () => {
         try {
-            const res = await axios.get('http://localhost:3000/api/user/signout');
+            const res = await axios.get('/api/user/signout');
             if (res.data.success === true) {
                 dispatch(signoutSuccess(res.data.message));
             }

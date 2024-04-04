@@ -104,7 +104,7 @@ const DashProfile = () => {
     try {
       dispatch(updateStart());
       console.log(currentState.currentState._id)
-      const res = await axios.put(`http://localhost:3000/api/user/update/${currentState.currentState._id}`, formData, {
+      const res = await axios.put(`/api/user/update/${currentState.currentState._id}`, formData, {
         withCredentials: true
       })
       if (res.data.success === true) {
@@ -123,7 +123,7 @@ const DashProfile = () => {
   const handleDeleteUser = async () => {
     try {
       dispatch(deleteUserStart())
-      const res = await axios.delete(`http://localhost:3000/api/user/delete/${currentState.currentState._id}`, { withCredentials: true })
+      const res = await axios.delete(`/api/user/delete/${currentState.currentState._id}`, { withCredentials: true })
       if (res.data.success === true) {
         dispatch(deleteUserSuccess(res.data));
         toast.success(res.data.message)
@@ -139,7 +139,7 @@ const DashProfile = () => {
 
   const signOut = async () => {
     try {
-      const res = await axios.get('http://localhost:3000/api/user/signout');
+      const res = await axios.get('/api/user/signout');
       if (res.data.success === true) {
         dispatch(signoutSuccess(res.data.message));
       }

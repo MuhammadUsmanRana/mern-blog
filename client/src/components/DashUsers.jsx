@@ -19,10 +19,9 @@ const DashUsers = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await axios.get("http://localhost:3000/api/user/getusers", {
+        const res = await axios.get("/api/user/getusers", {
           withCredentials: true
         })
-        console.log(res.data.users)
         if (res.data.users) {
           setUsers(res.data.users)
         }
@@ -41,8 +40,7 @@ const DashUsers = () => {
   const handleShowMore = async () => {
     const startIndex = users.length;
     try {
-      const res = await axios.get(`http://localhost:3000/api/user/getusers?startIndex=${startIndex}`, { withCredentials: true });
-
+      const res = await axios.get(`/api/user/getusers?startIndex=${startIndex}`, { withCredentials: true });
       if (res.data.users) {
         setUsers((preUser) => [...preUser, ...res.data.users]);
       }
@@ -56,7 +54,7 @@ const DashUsers = () => {
 
   const handleDeleteUser = async () => {
     try {
-      const res = await axios.delete(`http://localhost:3000/api/user/delete/${userIdToDelete}`, {
+      const res = await axios.delete(`/api/user/delete/${userIdToDelete}`, {
         withCredentials: true
       });
       if (res.data.success === true) {
@@ -72,7 +70,7 @@ const DashUsers = () => {
 
   }
   return (
-    <div className='table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500'>
+    <div className='w-full table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500'>
       {
         currentState.currentState.isAdmin && users.length > 0 ? (
           <>

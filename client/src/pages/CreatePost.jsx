@@ -58,7 +58,7 @@ const CreatePost = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:3000/api/post/create', formData, {
+      const res = await axios.post('/api/post/create', formData, {
         withCredentials: true
       });
       if (res.data.success === true) {

@@ -11,6 +11,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from "react-redux";
+import { useLocation } from 'react-router-dom';
+
 
 const UpdatePost = () => {
     const [file, setFile] = useState(null);
@@ -18,17 +20,18 @@ const UpdatePost = () => {
     const [imageUploadError, setImageUploadError] = useState(null);
     const [imageUploadProgress, setImageUploadProgress] = useState(null);
 
+    const location = useLocation();
+    const { defaultValues } = location.state || {};
     const currentState = useSelector((state) => state.user)
     const postId = useParams();
     const navigate = useNavigate();
-    // console.log("postId", postId)
 
     useEffect(() => {
         try {
             const fetchPosts = async () => {
-                const res = await axios.get(`http://localhost:3000/api/post/getposts?userId/${postId.postId}`);
+                const res = await axios.get(`/api/post/getposts?userId/${postId.postId}`);
                 if (res.data.posts) {
-                    setQuillData(res.data.posts[0])
+                    setQuillData(defaultValues)
                 }
             }
             fetchPosts()
@@ -74,11 +77,10 @@ const UpdatePost = () => {
         }
     }
 
-    console.log("quillData", quillData)
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.put(`http://localhost:3000/api/post/updateposts/${quillData._id}/${currentState.currentState._id}`, quillData, {
+            const res = await axios.put(`/api/post/updateposts/${quillData._id}/${currentState.currentState._id}`, quillData, {
                 withCredentials: true
             });
             if (res.data.success === true) {
@@ -92,6 +94,7 @@ const UpdatePost = () => {
             console.log("error", error);
         }
     }
+
     return (
         <div className='p-3 max-w-3xl mx-auto min-h-screen'>
             <h1 className='text-center text-3xl my-7 font-semibold'> Update Post</h1>

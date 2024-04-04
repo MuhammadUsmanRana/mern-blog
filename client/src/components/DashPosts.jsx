@@ -4,7 +4,7 @@ import { useSelector } from "react-redux"
 import { Button, Modal, Table } from "flowbite-react"
 import { Link } from 'react-router-dom';
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
-
+import { useNavigate } from 'react-router-dom';
 
 const DashPosts = () => {
 
@@ -12,13 +12,14 @@ const DashPosts = () => {
   const [showMore, setShowMore] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [postIdToDelete, setPostIdToDelete] = useState("");
+
+  const navigate = useNavigate()
   const currentState = useSelector((state) => state.user)
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await axios.get(`http://localhost:3000/api/post/getposts?userId=${currentState.currentState._id}`)
-        console.log(res.data.posts)
+        const res = await axios.get(`/api/post/getposts?userId=${currentState.currentState._id}`)
         if (res.data.posts) {
           setUserPosts(res.data.posts)
         }
@@ -37,7 +38,7 @@ const DashPosts = () => {
   const handleShowMore = async () => {
     const startIndex = userPosts.length;
     try {
-      const res = await axios.get(`http://localhost:3000/api/post/getposts?userId=${currentState.currentState._id}&startIndex=${startIndex}`);
+      const res = await axios.get(`/api/post/getposts?userId=${currentState.currentState._id}&startIndex=${startIndex}`);
 
       if (res.data.posts) {
         setUserPosts((prePost) => [...prePost, ...res.data.posts]);
@@ -53,7 +54,7 @@ const DashPosts = () => {
   const handleDeletePost = async () => {
     setShowModal(false);
     try {
-      const res = await axios.delete(`http://localhost:3000/api/post/deleteposts/${postIdToDelete}/${currentState.currentState._id}`, {
+      const res = await axios.delete(`/api/post/deleteposts/${postIdToDelete}/${currentState.currentState._id}`, {
         withCredentials: true
       });
       if (res.data.success === true) {
@@ -64,8 +65,12 @@ const DashPosts = () => {
     }
   }
 
+  const handleEdit = (post) => {
+    navigate(`/update-post/${post._id}`, { state: { defaultValues: post } });
+  };
+
   return (
-    <div className='table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500'>
+    <div className='w-full table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500'>
       {
         currentState.currentState.isAdmin && userPosts.length > 0 ? (
           <>
@@ -105,10 +110,8 @@ const DashPosts = () => {
                           }}>Delete </span>
                         </Table.Cell>
                         <Table.Cell>
-                          <Link className='text-teal-500 hover:underline cursor-pointer'
-                            to={`/update-post/${post._id}`}>
-                            <span>Edit </span>
-                          </Link>
+                          <span onClick={() => handleEdit(post)}
+                            className='text-teal-500 hover:underline cursor-pointer' >Edit</span>
                         </Table.Cell>
                       </Table.Row>
                     </Table.Body>
@@ -128,6 +131,7 @@ const DashPosts = () => {
           <p>You have no post yet!</p>
         )
       }
+      {/* Comfirm Delete Account */}
       <Modal show={showModal} size="md" onClose={() => setShowModal(false)} popup>
         <Modal.Header />
         <Modal.Body>
