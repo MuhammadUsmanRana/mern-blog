@@ -129,7 +129,8 @@ const CommentSection = ({ postId }) => {
                             placeholder='Add a commite...'
                             rows={3}
                             maxLength={200}
-                            {...register('comment')}
+                            {...register('comment',)}
+                            required
                         />
                         <div className='flex justify-between items-center mt-5'>
                             <p className='text-gray-500 text-xs'>200 charactors remaining</p>
