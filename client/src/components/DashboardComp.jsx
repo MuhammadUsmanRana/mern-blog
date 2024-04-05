@@ -26,7 +26,7 @@ const DashboardComp = () => {
                 if (data) {
                     setUsers(data.users);
                     setTotalUsers(data.totalUser);
-                    setLastMonthUser(data.lastMonthUsers)
+                    setLastMonthUsers(data.lastMonthUsers)
                 }
             } catch (error) {
                 console.log(error.message);
