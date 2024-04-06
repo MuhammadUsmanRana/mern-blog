@@ -8,6 +8,7 @@ import commentRoute from "./routes/comment.route.js"
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import bodyParser from "body-parser";
+import path from "path";
 
 dotenv.config()
 mongoose
@@ -22,6 +23,8 @@ mongoose
         console.log(err);
     });
 
+    const __dirname = path.resolve();
+
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -33,6 +36,11 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(bodyParser.json());
 
+app.use(express.static(path.join(__dirname, "/client/disk")));
+
+app.get('*',(req, res) => {
+    res.sendFile(path.join(__dirname, "client", "disc", "index.html"));
+})
 
 app.listen(3000, () => {
     console.log("server is running on port 3000!!!");
