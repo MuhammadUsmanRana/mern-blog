@@ -7,22 +7,29 @@ import postRoutes from './routes/post.route.js';
 import commentRoutes from './routes/comment.route.js';
 import cookieParser from 'cookie-parser';
 import path from 'path';
+import cors from 'cors';
 
 dotenv.config();
 
 mongoose
-  .connect(process.env.MONGO)
+  .connect('mongodb+srv://mu163953:0d1de0HMMD7i1U56@cluster0.zfedskl.mongodb.net/mern-blog?retryWrites=true&w=majority&appName=Cluster0')
   .then(() => {
     console.log('MongoDb is connected');
   })
   .catch((err) => {
-    console.log(err);
+    console.log(err,"connected error");
   });
 
 const __dirname = path.resolve();
 
 const app = express();
-
+app.use(cors(
+  {
+    origin: "http://mern-blog-by-usman.vercel.app",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  },
+));
 app.use(express.json());
 app.use(cookieParser());
 
