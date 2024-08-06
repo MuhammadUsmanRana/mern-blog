@@ -23,6 +23,9 @@ mongoose
 const __dirname = path.resolve();
 
 const app = express();
+app.get("/", (req, res) => {
+  res.send("Hello World!");
+})
 app.use(cors(
   {
     origin: "http://mern-blog-by-usman.vercel.app",
